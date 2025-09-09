@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlugOn - 전산 시스템</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 90%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 3rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .footer {
+            background: #f8f9fa;
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .content {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-plug"></i> PlugOn</h1>
+            <p>전산 시스템 통합 솔루션</p>
+        </header>
+
+        <div class="content">
+            <div class="grid">
+                <div class="card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>업무일정 관리</h3>
+                    <p>체계적인 업무 스케줄링과 진행률 추적이 가능한 업무일정 관리 시스템입니다.</p>
+                    <a href="https://noneral.com" class="btn">
+                        <i class="fas fa-external-link-alt"></i> 업무일정 시스템
+                    </a>
+                </div>
+
+                <div class="card">
+                    <i class="fas fa-database"></i>
+                    <h3>데이터 관리</h3>
+                    <p>통합 데이터베이스를 통한 체계적인 정보 관리 및 분석 시스템을 제공합니다.</p>
+                    <a href="#" class="btn">
+                        <i class="fas fa-cog"></i> 준비중
+                    </a>
+                </div>
+
+                <div class="card">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>분석 대시보드</h3>
+                    <p>실시간 데이터 분석과 시각화를 통한 인사이트 제공 시스템입니다.</p>
+                    <a href="#" class="btn">
+                        <i class="fas fa-cog"></i> 준비중
+                    </a>
+                </div>
+
+                <div class="card">
+                    <i class="fas fa-users"></i>
+                    <h3>사용자 관리</h3>
+                    <p>계층적 권한 시스템을 통한 안전하고 체계적인 사용자 관리 기능입니다.</p>
+                    <a href="#" class="btn">
+                        <i class="fas fa-cog"></i> 준비중
+                    </a>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <h2 style="margin-bottom: 1rem; color: #333;">현재 제공 중인 서비스</h2>
+                <div style="background: #e8f4f8; padding: 2rem; border-radius: 15px; margin-bottom: 2rem;">
+                    <h3 style="color: #2c3e50; margin-bottom: 1rem;">
+                        <i class="fas fa-calendar-check"></i> 미세안 업무일정 관리 시스템
+                    </h3>
+                    <p style="color: #555; margin-bottom: 1rem;">
+                        구글 Docs 스타일의 협업 업무일정 관리 시스템으로 트리 구조의 업무 관리, 
+                        테이블·칸반·타임라인 뷰, 실시간 진행률 추적이 가능합니다.
+                    </p>
+                    <a href="https://noneral.com" class="btn" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+                        <i class="fas fa-rocket"></i> 업무일정 시스템 바로가기
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2024 PlugOn. All rights reserved. | Powered by GitHub Pages</p>
+        </footer>
+    </div>
+</body>
+</html>
