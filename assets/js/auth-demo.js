@@ -128,7 +128,7 @@ class AuthManager {
         this.dispatchAuthEvent('logout');
         
         // 홈페이지로 리디렉션
-        window.location.href = '/';
+        window.location.href = 'index.html';
     }
 
     // UI 업데이트
@@ -192,8 +192,8 @@ class AuthManager {
         const currentPath = window.location.pathname;
         
         // 인증이 필요한 페이지들
-        const authRequiredPages = ['/mystore/', '/tasks/', '/board/write'];
-        const adminRequiredPages = ['/tasks/'];
+        const authRequiredPages = ['mystore/', 'tasks/', 'board/write'];
+        const adminRequiredPages = ['tasks/'];
 
         if (authRequiredPages.some(page => currentPath.includes(page))) {
             if (!this.isLoggedIn()) {
@@ -205,7 +205,7 @@ class AuthManager {
         if (adminRequiredPages.some(page => currentPath.includes(page))) {
             if (!this.hasTaskAccess()) {
                 alert('접근 권한이 없습니다.');
-                window.location.href = '/';
+                window.location.href = 'index.html';
                 return;
             }
         }
@@ -227,7 +227,7 @@ class AuthManager {
     // 로그인 페이지로 리디렉션
     redirectToLogin() {
         const currentUrl = encodeURIComponent(window.location.href);
-        window.location.href = `/auth/login.html?return=${currentUrl}`;
+        window.location.href = `demo-login.html?return=${currentUrl}`;
     }
 
     // 이벤트 바인딩
