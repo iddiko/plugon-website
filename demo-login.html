@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - PlugOn 데모</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-accounts {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .demo-accounts h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .account-item:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .account-info {
+            flex: 1;
+        }
+
+        .account-email {
+            font-weight: 500;
+        }
+
+        .account-role {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .btn-use {
+            padding: 5px 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .account-item:hover .btn-use {
+            background: white;
+            color: #667eea;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-home a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-home a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message {
+            background: #51cf66;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-section">
+            <div class="logo-text">PlugOn</div>
+            <div class="demo-badge">데모 버전</div>
+            <p style="margin-top: 15px; color: #666;">통합 플랫폼 데모 로그인</p>
+        </div>
+
+        <div class="error-message" id="error-message"></div>
+        <div class="success-message" id="success-message"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i>
+                로그인
+            </button>
+        </form>
+
+        <div class="demo-accounts">
+            <h4><i class="fas fa-users"></i> 데모 계정 목록</h4>
+            <div class="account-item" onclick="useAccount('admin@plugon.co.kr', 'admin123')">
+                <div class="account-info">
+                    <div class="account-email">admin@plugon.co.kr</div>
+                    <div class="account-role">최고관리자 (모든 기능 접근 가능)</div>
+                </div>
+                <button class="btn-use">사용</button>
+            </div>
+            
+            <div class="account-item" onclick="useAccount('user@plugon.co.kr', 'user123')">
+                <div class="account-info">
+                    <div class="account-email">user@plugon.co.kr</div>
+                    <div class="account-role">일반회원 (쇼핑 기능만 접근 가능)</div>
+                </div>
+                <button class="btn-use">사용</button>
+            </div>
+        </div>
+
+        <div class="back-home">
+            <a href="index.html">
+                <i class="fas fa-home"></i>
+                홈페이지로 돌아가기
+            </a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/auth-demo.js"></script>
+
+    <script>
+        // 폼 제출 처리
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            hideMessages();
+            
+            try {
+                const result = await window.authManager.login(email, password);
+                
+                if (result.success) {
+                    showMessage('로그인 성공! 홈페이지로 이동합니다...', 'success');
+                    setTimeout(() => {
+                        const returnUrl = new URLSearchParams(window.location.search).get('return');
+                        window.location.href = returnUrl || 'index.html';
+                    }, 1500);
+                } else {
+                    showMessage(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                showMessage('로그인 처리 중 오류가 발생했습니다.', 'error');
+            }
+        });
+
+        // 데모 계정 사용
+        function useAccount(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            
+            // 자동 로그인
+            document.getElementById('login-form').dispatchEvent(new Event('submit'));
+        }
+
+        // 메시지 표시
+        function showMessage(message, type) {
+            hideMessages();
+            const messageEl = document.getElementById(type + '-message');
+            messageEl.textContent = message;
+            messageEl.style.display = 'block';
+        }
+
+        // 메시지 숨김
+        function hideMessages() {
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('success-message').style.display = 'none';
+        }
+
+        // 페이지 로드시 이미 로그인된 경우 리디렉션
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (window.authManager && window.authManager.isLoggedIn()) {
+                    const returnUrl = new URLSearchParams(window.location.search).get('return');
+                    window.location.href = returnUrl || 'index.html';
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

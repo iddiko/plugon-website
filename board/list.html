@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판 - PlugOn 통합 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <style>
+        .board-container {
+            max-width: 1200px;
+            margin: 100px auto 60px;
+            padding: 0 20px;
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .board-title h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .board-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .board-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #666;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .category-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .board-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .board-table thead {
+            background: #f8f9fa;
+        }
+
+        .board-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .board-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+
+        .board-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .post-title {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .post-title:hover {
+            color: #667eea;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .category-badge.notice {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .category-badge.free {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+
+        .view-count {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .btn-write {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-write:hover {
+            background: #5a67d8;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #666;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button:disabled {
+            background: #f5f5f5;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            max-width: 300px;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-search {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-search:hover {
+            background: #5a67d8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .board-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .board-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .board-table {
+                font-size: 0.9rem;
+            }
+
+            .board-table th,
+            .board-table td {
+                padding: 10px;
+            }
+
+            .board-table .desktop-only {
+                display: none;
+            }
+
+            .category-filter {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-input {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <span class="logo-text">PlugOn</span>
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../index.html" class="nav-link">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../index.html#products" class="nav-link">쇼핑</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="list.html" class="nav-link">게시판</a>
+                    </li>
+                    <li class="nav-item auth-required" style="display: none;">
+                        <a href="../mystore/dashboard.html" class="nav-link">MyStore</a>
+                    </li>
+                    <li class="nav-item admin-only" style="display: none;">
+                        <a href="../tasks/index.html" class="nav-link">업무일정</a>
+                    </li>
+                </ul>
+                
+                <div class="user-menu">
+                    <div class="auth-buttons">
+                        <a href="../auth/login.html" class="btn-login">로그인</a>
+                        <a href="../auth/register.html" class="btn-register">회원가입</a>
+                    </div>
+                    
+                    <div class="user-dropdown" style="display: none;">
+                        <button class="user-dropdown-toggle">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="user-info">
+                                <span class="user-name">사용자명</span>
+                                <span class="user-role">일반회원</span>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="user-details">
+                                    <div class="user-name">사용자명</div>
+                                    <div class="user-role">일반회원</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>내 정보</span>
+                            </a>
+                            <a href="../shop/cart.html" class="dropdown-item">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>장바구니 (<span id="cart-count">0</span>)</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>로그아웃</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="board-container">
+        <div class="board-header">
+            <div class="board-title">
+                <h1><i class="fas fa-clipboard-list"></i> 게시판</h1>
+                <p class="board-subtitle">자유롭게 소통하고 정보를 공유하세요</p>
+            </div>
+            <div class="board-actions">
+                <a href="write.html" class="btn-write auth-required" style="display: none;">
+                    <i class="fas fa-pen"></i>
+                    글쓰기
+                </a>
+                <div class="guest-message" style="color: #666; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i>
+                    글을 작성하려면 <a href="../auth/login.html" style="color: #667eea;">로그인</a>이 필요합니다
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="category-filter">
+            <button class="category-btn active" data-category="all">전체</button>
+            <button class="category-btn" data-category="notice">공지사항</button>
+            <button class="category-btn" data-category="free">자유게시판</button>
+            <button class="category-btn" data-category="qna">질문답변</button>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="제목 또는 내용을 검색하세요..." id="searchInput">
+            <button class="btn-search" onclick="searchPosts()">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <!-- Board Table -->
+        <div class="board-content">
+            <table class="board-table">
+                <thead>
+                    <tr>
+                        <th width="60">번호</th>
+                        <th width="100" class="desktop-only">분류</th>
+                        <th>제목</th>
+                        <th width="120" class="desktop-only">작성자</th>
+                        <th width="100" class="desktop-only">작성일</th>
+                        <th width="60">조회</th>
+                    </tr>
+                </thead>
+                <tbody id="postsList">
+                    <!-- 게시글 목록이 여기에 동적으로 로드됩니다 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <i class="fas fa-inbox"></i>
+            <h3>게시글이 없습니다</h3>
+            <p>첫 번째 글을 작성해보세요!</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- 페이지네이션이 여기에 동적으로 생성됩니다 -->
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        class BoardManager {
+            constructor() {
+                this.currentPage = 1;
+                this.currentCategory = 'all';
+                this.currentSearch = '';
+                this.postsPerPage = 10;
+                this.init();
+            }
+
+            async init() {
+                this.bindEvents();
+                await this.loadPosts();
+            }
+
+            bindEvents() {
+                // 카테고리 필터 버튼
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const category = e.target.dataset.category;
+                        this.filterByCategory(category);
+                    });
+                });
+
+                // 검색 Enter 키
+                document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.searchPosts();
+                    }
+                });
+            }
+
+            async loadPosts() {
+                try {
+                    const params = new URLSearchParams({
+                        category: this.currentCategory,
+                        page: this.currentPage,
+                        limit: this.postsPerPage
+                    });
+
+                    if (this.currentSearch) {
+                        params.append('search', this.currentSearch);
+                    }
+
+                    const response = await fetch(`/api/posts?${params}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.renderPosts(data.posts);
+                        this.renderPagination(data.pagination || { page: 1, totalPages: 1, total: data.posts.length });
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    console.error('게시글 로드 실패:', error);
+                    this.showEmptyState();
+                }
+            }
+
+            renderPosts(posts) {
+                const tbody = document.getElementById('postsList');
+                const emptyState = document.getElementById('emptyState');
+
+                if (!posts || posts.length === 0) {
+                    this.showEmptyState();
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+
+                tbody.innerHTML = posts.map((post, index) => {
+                    const categoryNames = {
+                        'notice': '공지사항',
+                        'free': '자유게시판',
+                        'qna': '질문답변',
+                        'general': '일반'
+                    };
+
+                    const categoryClass = post.category || 'general';
+                    const categoryName = categoryNames[categoryClass] || '일반';
+                    const postNumber = (this.currentPage - 1) * this.postsPerPage + index + 1;
+
+                    return `
+                        <tr onclick="viewPost('${post.id}')">
+                            <td>${postNumber}</td>
+                            <td class="desktop-only">
+                                <span class="category-badge ${categoryClass}">${categoryName}</span>
+                            </td>
+                            <td>
+                                <a href="view.html?id=${post.id}" class="post-title">
+                                    ${post.title}
+                                </a>
+                                <div class="post-meta mobile-only">
+                                    <span class="category-badge ${categoryClass}">${categoryName}</span> • 
+                                    ${post.firstName} ${post.lastName || ''} • 
+                                    ${this.formatDate(post.createdAt)}
+                                </div>
+                            </td>
+                            <td class="desktop-only">${post.firstName} ${post.lastName || ''}</td>
+                            <td class="desktop-only">${this.formatDate(post.createdAt)}</td>
+                            <td class="view-count">${post.viewCount || 0}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            showEmptyState() {
+                const tbody = document.getElementById('postsList');
+                const emptyState = document.getElementById('emptyState');
+                
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+            }
+
+            renderPagination(pagination) {
+                const paginationContainer = document.getElementById('pagination');
+                const { page, totalPages } = pagination;
+
+                if (totalPages <= 1) {
+                    paginationContainer.innerHTML = '';
+                    return;
+                }
+
+                let paginationHTML = '';
+
+                // Previous button
+                paginationHTML += `
+                    <button ${page <= 1 ? 'disabled' : ''} onclick="boardManager.changePage(${page - 1})">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                `;
+
+                // Page numbers
+                const startPage = Math.max(1, page - 2);
+                const endPage = Math.min(totalPages, page + 2);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationHTML += `
+                        <button class="${i === page ? 'active' : ''}" onclick="boardManager.changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                }
+
+                // Next button
+                paginationHTML += `
+                    <button ${page >= totalPages ? 'disabled' : ''} onclick="boardManager.changePage(${page + 1})">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+
+                paginationContainer.innerHTML = paginationHTML;
+            }
+
+            async changePage(page) {
+                this.currentPage = page;
+                await this.loadPosts();
+            }
+
+            async filterByCategory(category) {
+                // 버튼 상태 업데이트
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-category="${category}"]`).classList.add('active');
+
+                this.currentCategory = category;
+                this.currentPage = 1;
+                await this.loadPosts();
+            }
+
+            async searchPosts() {
+                const searchInput = document.getElementById('searchInput');
+                this.currentSearch = searchInput.value.trim();
+                this.currentPage = 1;
+                await this.loadPosts();
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = now - date;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+                if (days === 0) {
+                    return date.toLocaleTimeString('ko-KR', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                } else if (days === 1) {
+                    return '어제';
+                } else if (days < 7) {
+                    return `${days}일 전`;
+                } else {
+                    return date.toLocaleDateString('ko-KR', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                }
+            }
+        }
+
+        // 전역 함수들
+        function viewPost(id) {
+            window.location.href = `view.html?id=${id}`;
+        }
+
+        function searchPosts() {
+            boardManager.searchPosts();
+        }
+
+        // 게시판 매니저 초기화
+        let boardManager;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            boardManager = new BoardManager();
+
+            // 인증 상태에 따른 UI 업데이트
+            document.addEventListener('auth-login', function() {
+                updateBoardUI();
+            });
+
+            document.addEventListener('auth-logout', function() {
+                updateBoardUI();
+            });
+
+            updateBoardUI();
+        });
+
+        function updateBoardUI() {
+            const authRequired = document.querySelectorAll('.auth-required');
+            const guestMessage = document.querySelector('.guest-message');
+            const isLoggedIn = window.authManager && window.authManager.isLoggedIn();
+
+            authRequired.forEach(element => {
+                element.style.display = isLoggedIn ? 'inline-flex' : 'none';
+            });
+
+            if (guestMessage) {
+                guestMessage.style.display = isLoggedIn ? 'none' : 'block';
+            }
+        }
+    </script>
+</body>
+</html>

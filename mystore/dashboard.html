@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyStore 대시보드 - PlugOn 통합 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <style>
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 100px auto 60px;
+            padding: 0 20px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .welcome-text h1 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+        }
+
+        .welcome-text .role-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.products {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-icon.orders {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-icon.revenue {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .stat-icon.users {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .stat-content h3 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 3px;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f1f3f4;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .card-header .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .recent-orders {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+
+        .order-meta {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .order-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .order-status.processing {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .order-status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .quick-actions {
+            display: grid;
+            gap: 15px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .action-btn i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .charts-section {
+            margin-top: 40px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            border-radius: 8px;
+        }
+
+        .access-denied {
+            text-align: center;
+            padding: 100px 20px;
+            color: #666;
+        }
+
+        .access-denied i {
+            font-size: 4rem;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+
+        .access-denied h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .access-denied p {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-home:hover {
+            background: #5a67d8;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                margin-top: 80px;
+                padding: 0 15px;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .welcome-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .user-avatar {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <span class="logo-text">PlugOn</span>
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../index.html" class="nav-link">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../shop/products.html" class="nav-link">쇼핑</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../board/list.html" class="nav-link">게시판</a>
+                    </li>
+                    <li class="nav-item active auth-required">
+                        <a href="dashboard.html" class="nav-link">MyStore</a>
+                    </li>
+                    <li class="nav-item admin-only" style="display: none;">
+                        <a href="../tasks/index.html" class="nav-link">업무일정</a>
+                    </li>
+                </ul>
+                
+                <div class="user-menu">
+                    <div class="auth-buttons">
+                        <a href="../auth/login.html" class="btn-login">로그인</a>
+                        <a href="../auth/register.html" class="btn-register">회원가입</a>
+                    </div>
+                    
+                    <div class="user-dropdown" style="display: none;">
+                        <button class="user-dropdown-toggle">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="user-info">
+                                <span class="user-name">사용자명</span>
+                                <span class="user-role">일반회원</span>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="user-details">
+                                    <div class="user-name">사용자명</div>
+                                    <div class="user-role">일반회원</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>내 정보</span>
+                            </a>
+                            <a href="../shop/cart.html" class="dropdown-item">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>장바구니 (<span id="cart-count">0</span>)</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>로그아웃</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-container">
+        <!-- Access Denied State (기본적으로 숨김) -->
+        <div class="access-denied" id="accessDenied" style="display: none;">
+            <i class="fas fa-ban"></i>
+            <h2>접근 권한이 없습니다</h2>
+            <p>MyStore 전산시스템은 관리자 권한이 있는 사용자만 접근할 수 있습니다.<br>
+            권한이 필요한 경우 시스템 관리자에게 문의해주세요.</p>
+            <a href="../index.html" class="btn-home">
+                <i class="fas fa-home"></i>
+                홈으로 돌아가기
+            </a>
+        </div>
+
+        <!-- Dashboard Content (권한이 있는 경우에만 표시) -->
+        <div id="dashboardContent" style="display: none;">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div class="welcome-section">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="welcome-text">
+                        <h1>안녕하세요, <span id="userName">관리자</span>님</h1>
+                        <span class="role-badge" id="userRole">최고관리자</span>
+                    </div>
+                </div>
+                <div class="dashboard-date">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="currentDate"></span>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon products">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>총 제품</h3>
+                        <div class="stat-value" id="totalProducts">0</div>
+                        <div class="stat-change">+2 이번 주</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orders">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>총 주문</h3>
+                        <div class="stat-value" id="totalOrders">0</div>
+                        <div class="stat-change">+5 오늘</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-won-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>이번 달 매출</h3>
+                        <div class="stat-value">₩0</div>
+                        <div class="stat-change">+12% 전월 대비</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>활성 사용자</h3>
+                        <div class="stat-value">0</div>
+                        <div class="stat-change">+3 이번 주</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="dashboard-content">
+                <!-- Recent Orders -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>최근 주문</h2>
+                            <p class="subtitle">최근 들어온 주문을 확인하세요</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="recent-orders" id="recentOrders">
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h4>PlugOn 스탠다드 패키지</h4>
+                                    <div class="order-meta">주문번호: #ORD-001 | 2024-03-15</div>
+                                </div>
+                                <div class="order-status pending">대기중</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h4>PlugOn 프리미엄 패키지</h4>
+                                    <div class="order-meta">주문번호: #ORD-002 | 2024-03-15</div>
+                                </div>
+                                <div class="order-status processing">처리중</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h4>PlugOn 엔터프라이즈 패키지</h4>
+                                    <div class="order-meta">주문번호: #ORD-003 | 2024-03-14</div>
+                                </div>
+                                <div class="order-status completed">완료</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>빠른 작업</h2>
+                            <p class="subtitle">자주 사용하는 기능들</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="quick-actions">
+                            <a href="products.html" class="action-btn">
+                                <i class="fas fa-plus"></i>
+                                <span>새 제품 추가</span>
+                            </a>
+                            <a href="orders.html" class="action-btn">
+                                <i class="fas fa-list-alt"></i>
+                                <span>주문 관리</span>
+                            </a>
+                            <a href="#" class="action-btn">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>매출 분석</span>
+                            </a>
+                            <a href="#" class="action-btn">
+                                <i class="fas fa-cog"></i>
+                                <span>시스템 설정</span>
+                            </a>
+                            <a href="#" class="action-btn">
+                                <i class="fas fa-download"></i>
+                                <span>데이터 내보내기</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="charts-grid">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2>매출 추이</h2>
+                            <p class="subtitle">최근 6개월 매출 현황</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-placeholder">
+                                <div>
+                                    <i class="fas fa-chart-line" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                                    <p>차트 데이터 준비 중...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2>제품별 판매량</h2>
+                            <p class="subtitle">인기 제품 순위</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-placeholder">
+                                <div>
+                                    <i class="fas fa-chart-pie" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                                    <p>차트 데이터 준비 중...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        class DashboardManager {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.checkAccess();
+                this.updateDateTime();
+                this.loadDashboardData();
+                
+                // 1분마다 시간 업데이트
+                setInterval(() => this.updateDateTime(), 60000);
+            }
+
+            checkAccess() {
+                if (!window.authManager || !window.authManager.hasAdminAccess()) {
+                    document.getElementById('accessDenied').style.display = 'block';
+                    document.getElementById('dashboardContent').style.display = 'none';
+                    return false;
+                }
+
+                document.getElementById('accessDenied').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block';
+                
+                this.updateUserInfo();
+                return true;
+            }
+
+            updateUserInfo() {
+                const user = window.authManager.getCurrentUser();
+                if (user) {
+                    document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+                    
+                    const roleNames = {
+                        'super_admin': '최고관리자',
+                        'headquarters': '본사',
+                        'branch': '지사',
+                        'district': '지점',
+                        'salesPoint': '영업점'
+                    };
+                    
+                    document.getElementById('userRole').textContent = roleNames[user.role] || user.role;
+                }
+            }
+
+            updateDateTime() {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('ko-KR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'long'
+                });
+                
+                const dateElement = document.getElementById('currentDate');
+                if (dateElement) {
+                    dateElement.textContent = dateStr;
+                }
+            }
+
+            async loadDashboardData() {
+                try {
+                    // 제품 수 로드
+                    await this.loadProductStats();
+                    
+                    // 추가 통계 데이터 로드
+                    // await this.loadOrderStats();
+                    // await this.loadRevenueStats();
+                    
+                } catch (error) {
+                    console.error('대시보드 데이터 로드 실패:', error);
+                }
+            }
+
+            async loadProductStats() {
+                try {
+                    const response = await fetch('/api/products?limit=1000');
+                    const data = await response.json();
+                    
+                    if (data.success && data.products) {
+                        const totalProducts = data.products.length;
+                        document.getElementById('totalProducts').textContent = totalProducts;
+                    }
+                } catch (error) {
+                    console.error('제품 통계 로드 실패:', error);
+                }
+            }
+
+            // 추가 통계 로드 함수들 (필요시 구현)
+            async loadOrderStats() {
+                // 주문 통계 로드
+            }
+
+            async loadRevenueStats() {
+                // 매출 통계 로드
+            }
+        }
+
+        // 페이지 로드 후 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardManager = new DashboardManager();
+            
+            // 인증 상태 변경 감지
+            document.addEventListener('auth-login', function() {
+                dashboardManager.checkAccess();
+            });
+
+            document.addEventListener('auth-logout', function() {
+                dashboardManager.checkAccess();
+            });
+        });
+    </script>
+</body>
+</html>

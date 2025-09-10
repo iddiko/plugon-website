@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글쓰기 - PlugOn 통합 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <style>
+        .write-container {
+            max-width: 800px;
+            margin: 100px auto 60px;
+            padding: 0 20px;
+        }
+
+        .write-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .write-title h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .write-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .btn-list {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-list:hover {
+            background: #545b62;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .write-form {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-label .required {
+            color: #e74c3c;
+            margin-left: 3px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control.textarea {
+            min-height: 300px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .char-count.warning {
+            color: #f39c12;
+        }
+
+        .char-count.danger {
+            color: #e74c3c;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            padding-top: 20px;
+            border-top: 1px solid #f1f3f4;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-help {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            padding: 12px 16px;
+            border: 2px dashed #d1ecf1;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6c757d;
+        }
+
+        .file-label:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .file-label.drag-over {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        @media (max-width: 768px) {
+            .write-container {
+                margin-top: 80px;
+                padding: 0 15px;
+            }
+
+            .write-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .write-form {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <span class="logo-text">PlugOn</span>
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../index.html" class="nav-link">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../index.html#products" class="nav-link">쇼핑</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="list.html" class="nav-link">게시판</a>
+                    </li>
+                    <li class="nav-item auth-required" style="display: none;">
+                        <a href="../mystore/dashboard.html" class="nav-link">MyStore</a>
+                    </li>
+                    <li class="nav-item admin-only" style="display: none;">
+                        <a href="../tasks/index.html" class="nav-link">업무일정</a>
+                    </li>
+                </ul>
+                
+                <div class="user-menu">
+                    <div class="auth-buttons">
+                        <a href="../auth/login.html" class="btn-login">로그인</a>
+                        <a href="../auth/register.html" class="btn-register">회원가입</a>
+                    </div>
+                    
+                    <div class="user-dropdown" style="display: none;">
+                        <button class="user-dropdown-toggle">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="user-info">
+                                <span class="user-name">사용자명</span>
+                                <span class="user-role">일반회원</span>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="user-details">
+                                    <div class="user-name">사용자명</div>
+                                    <div class="user-role">일반회원</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>내 정보</span>
+                            </a>
+                            <a href="../shop/cart.html" class="dropdown-item">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>장바구니 (<span id="cart-count">0</span>)</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>로그아웃</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="write-container">
+        <div class="write-header">
+            <div class="write-title">
+                <h1><i class="fas fa-pen"></i> 글쓰기</h1>
+                <p class="write-subtitle">자유롭게 의견을 나누고 정보를 공유해보세요</p>
+            </div>
+            <a href="list.html" class="btn-list">
+                <i class="fas fa-list"></i>
+                목록으로
+            </a>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            글이 성공적으로 작성되었습니다!
+        </div>
+
+        <form class="write-form" id="writeForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="category">
+                        분류 <span class="required">*</span>
+                    </label>
+                    <select class="form-select" id="category" name="category" required>
+                        <option value="">분류를 선택하세요</option>
+                        <option value="general">일반</option>
+                        <option value="free">자유게시판</option>
+                        <option value="qna">질문답변</option>
+                    </select>
+                    <div class="error-message" id="categoryError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="author">
+                        작성자
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="author" 
+                        name="author" 
+                        readonly
+                        placeholder="로그인 후 자동 입력됩니다"
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="title">
+                    제목 <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    id="title" 
+                    name="title" 
+                    required
+                    maxlength="100"
+                    placeholder="제목을 입력하세요"
+                >
+                <div class="char-count" id="titleCount">0 / 100</div>
+                <div class="error-message" id="titleError"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="content">
+                    내용 <span class="required">*</span>
+                </label>
+                <textarea 
+                    class="form-control textarea" 
+                    id="content" 
+                    name="content" 
+                    required
+                    maxlength="5000"
+                    placeholder="내용을 입력하세요&#10;&#10;• 욕설, 비방, 광고성 글은 삭제될 수 있습니다&#10;• 저작권을 침해하는 내용은 게시할 수 없습니다&#10;• 개인정보 노출에 주의하시기 바랍니다"
+                ></textarea>
+                <div class="char-count" id="contentCount">0 / 5000</div>
+                <div class="error-message" id="contentError"></div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                    <i class="fas fa-undo"></i>
+                    초기화
+                </button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-save"></i>
+                    작성완료
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        class WriteManager {
+            constructor() {
+                this.form = document.getElementById('writeForm');
+                this.submitBtn = document.getElementById('submitBtn');
+                this.init();
+            }
+
+            init() {
+                this.checkAuth();
+                this.bindEvents();
+                this.updateAuthor();
+            }
+
+            checkAuth() {
+                if (!window.authManager || !window.authManager.isLoggedIn()) {
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '../auth/login.html?return=' + encodeURIComponent(window.location.href);
+                    return;
+                }
+            }
+
+            updateAuthor() {
+                const user = window.authManager.getCurrentUser();
+                if (user) {
+                    const authorInput = document.getElementById('author');
+                    authorInput.value = `${user.firstName} ${user.lastName}`;
+                }
+            }
+
+            bindEvents() {
+                // 폼 제출
+                this.form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleSubmit();
+                });
+
+                // 글자 수 카운터
+                document.getElementById('title').addEventListener('input', () => {
+                    this.updateCharCount('title', 100);
+                });
+
+                document.getElementById('content').addEventListener('input', () => {
+                    this.updateCharCount('content', 5000);
+                });
+
+                // 실시간 유효성 검사
+                document.getElementById('category').addEventListener('change', () => {
+                    this.clearError('category');
+                });
+
+                document.getElementById('title').addEventListener('input', () => {
+                    this.clearError('title');
+                });
+
+                document.getElementById('content').addEventListener('input', () => {
+                    this.clearError('content');
+                });
+            }
+
+            updateCharCount(fieldName, maxLength) {
+                const field = document.getElementById(fieldName);
+                const counter = document.getElementById(fieldName + 'Count');
+                const currentLength = field.value.length;
+
+                counter.textContent = `${currentLength} / ${maxLength}`;
+
+                // 색상 변경
+                counter.className = 'char-count';
+                if (currentLength > maxLength * 0.8) {
+                    counter.classList.add('warning');
+                }
+                if (currentLength > maxLength * 0.95) {
+                    counter.classList.add('danger');
+                }
+            }
+
+            clearError(fieldName) {
+                const errorElement = document.getElementById(fieldName + 'Error');
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                    errorElement.textContent = '';
+                }
+            }
+
+            showError(fieldName, message) {
+                const errorElement = document.getElementById(fieldName + 'Error');
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+
+            validateForm() {
+                let isValid = true;
+
+                // 분류 검사
+                const category = document.getElementById('category').value;
+                if (!category) {
+                    this.showError('category', '분류를 선택해주세요.');
+                    isValid = false;
+                }
+
+                // 제목 검사
+                const title = document.getElementById('title').value.trim();
+                if (!title) {
+                    this.showError('title', '제목을 입력해주세요.');
+                    isValid = false;
+                } else if (title.length > 100) {
+                    this.showError('title', '제목은 100자 이내로 입력해주세요.');
+                    isValid = false;
+                }
+
+                // 내용 검사
+                const content = document.getElementById('content').value.trim();
+                if (!content) {
+                    this.showError('content', '내용을 입력해주세요.');
+                    isValid = false;
+                } else if (content.length < 10) {
+                    this.showError('content', '내용은 10자 이상 입력해주세요.');
+                    isValid = false;
+                } else if (content.length > 5000) {
+                    this.showError('content', '내용은 5000자 이내로 입력해주세요.');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            async handleSubmit() {
+                if (!this.validateForm()) {
+                    return;
+                }
+
+                const formData = new FormData(this.form);
+                const data = {
+                    category: formData.get('category'),
+                    title: formData.get('title').trim(),
+                    content: formData.get('content').trim()
+                };
+
+                try {
+                    // 버튼 상태 변경
+                    this.submitBtn.disabled = true;
+                    this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 작성 중...';
+
+                    const response = await fetch('/api/posts', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        // 성공 메시지 표시
+                        this.showSuccessMessage('글이 성공적으로 작성되었습니다!');
+                        
+                        // 2초 후 목록 페이지로 이동
+                        setTimeout(() => {
+                            window.location.href = 'list.html';
+                        }, 2000);
+                    } else {
+                        throw new Error(result.message || '글 작성에 실패했습니다.');
+                    }
+
+                } catch (error) {
+                    console.error('글 작성 오류:', error);
+                    alert('글 작성에 실패했습니다: ' + error.message);
+
+                    // 버튼 복원
+                    this.submitBtn.disabled = false;
+                    this.submitBtn.innerHTML = '<i class="fas fa-save"></i> 작성완료';
+                }
+            }
+
+            showSuccessMessage(message) {
+                const successElement = document.getElementById('successMessage');
+                successElement.textContent = message;
+                successElement.style.display = 'block';
+                
+                // 페이지 상단으로 스크롤
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            resetForm() {
+                if (confirm('작성 중인 내용이 모두 삭제됩니다. 계속하시겠습니까?')) {
+                    this.form.reset();
+                    this.updateCharCount('title', 100);
+                    this.updateCharCount('content', 5000);
+                    this.clearAllErrors();
+                    this.updateAuthor();
+                }
+            }
+
+            clearAllErrors() {
+                document.querySelectorAll('.error-message').forEach(element => {
+                    element.style.display = 'none';
+                    element.textContent = '';
+                });
+            }
+        }
+
+        // 전역 함수
+        function resetForm() {
+            writeManager.resetForm();
+        }
+
+        // 페이지 로드 후 초기화
+        let writeManager;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            writeManager = new WriteManager();
+        });
+    </script>
+</body>
+</html>

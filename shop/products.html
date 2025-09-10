@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쇼핑 - PlugOn 통합 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/shop.css">
+    <style>
+        .shop-container {
+            max-width: 1200px;
+            margin: 100px auto 60px;
+            padding: 0 20px;
+        }
+
+        .shop-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .shop-header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .shop-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .shop-filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid #e1e5e9;
+            background: white;
+            color: #666;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            min-width: 250px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-search {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-search:hover {
+            background: #5a67d8;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #f0f4ff;
+            color: #667eea;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-cart {
+            flex: 1;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cart:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-detail {
+            padding: 10px 15px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-detail:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 40px 0;
+        }
+
+        .pagination button {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #666;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button:disabled {
+            background: #f5f5f5;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .shop-container {
+                margin-top: 80px;
+                padding: 0 15px;
+            }
+
+            .shop-header h1 {
+                font-size: 2rem;
+            }
+
+            .shop-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .category-filters {
+                justify-content: center;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .product-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <span class="logo-text">PlugOn</span>
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../index.html" class="nav-link">홈</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="products.html" class="nav-link">쇼핑</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../board/list.html" class="nav-link">게시판</a>
+                    </li>
+                    <li class="nav-item auth-required" style="display: none;">
+                        <a href="../mystore/dashboard.html" class="nav-link">MyStore</a>
+                    </li>
+                    <li class="nav-item admin-only" style="display: none;">
+                        <a href="../tasks/index.html" class="nav-link">업무일정</a>
+                    </li>
+                </ul>
+                
+                <div class="user-menu">
+                    <div class="auth-buttons">
+                        <a href="../auth/login.html" class="btn-login">로그인</a>
+                        <a href="../auth/register.html" class="btn-register">회원가입</a>
+                    </div>
+                    
+                    <div class="user-dropdown" style="display: none;">
+                        <button class="user-dropdown-toggle">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="user-info">
+                                <span class="user-name">사용자명</span>
+                                <span class="user-role">일반회원</span>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="user-details">
+                                    <div class="user-name">사용자명</div>
+                                    <div class="user-role">일반회원</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>내 정보</span>
+                            </a>
+                            <a href="cart.html" class="dropdown-item">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>장바구니 (<span id="cart-count">0</span>)</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>로그아웃</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="shop-container">
+        <div class="shop-header">
+            <h1><i class="fas fa-store"></i> PlugOn Store</h1>
+            <p class="shop-subtitle">최고의 전산시스템 솔루션을 만나보세요</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="shop-filters">
+            <div class="category-filters">
+                <button class="filter-btn active" data-category="all">전체</button>
+                <button class="filter-btn" data-category="software">소프트웨어</button>
+                <button class="filter-btn" data-category="hardware">하드웨어</button>
+                <button class="filter-btn" data-category="service">서비스</button>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="제품을 검색하세요..." id="searchInput">
+                <button class="btn-search" onclick="searchProducts()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsContainer">
+            <div class="loading" id="loadingState">
+                <i class="fas fa-spinner"></i>
+                <p>제품을 불러오는 중입니다...</p>
+            </div>
+
+            <div class="products-grid" id="productsGrid" style="display: none;">
+                <!-- 제품 카드들이 여기에 동적으로 로드됩니다 -->
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-box-open"></i>
+                <h3>제품이 없습니다</h3>
+                <p>검색 조건을 바꿔서 다시 시도해보세요</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- 페이지네이션이 여기에 동적으로 생성됩니다 -->
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/shop.js"></script>
+    <script>
+        class ProductsManager {
+            constructor() {
+                this.currentPage = 1;
+                this.currentCategory = 'all';
+                this.currentSearch = '';
+                this.productsPerPage = 12;
+                this.init();
+            }
+
+            async init() {
+                this.bindEvents();
+                await this.loadProducts();
+            }
+
+            bindEvents() {
+                // 카테고리 필터 버튼
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const category = e.target.dataset.category;
+                        this.filterByCategory(category);
+                    });
+                });
+
+                // 검색 Enter 키
+                document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.searchProducts();
+                    }
+                });
+            }
+
+            async loadProducts() {
+                try {
+                    this.showLoading();
+
+                    const params = new URLSearchParams({
+                        category: this.currentCategory,
+                        page: this.currentPage,
+                        limit: this.productsPerPage
+                    });
+
+                    if (this.currentSearch) {
+                        params.append('search', this.currentSearch);
+                    }
+
+                    const response = await fetch(`/api/products?${params}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.renderProducts(data.products);
+                        this.renderPagination(data.pagination);
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (error) {
+                    console.error('제품 로드 실패:', error);
+                    this.showEmpty();
+                }
+            }
+
+            showLoading() {
+                document.getElementById('loadingState').style.display = 'block';
+                document.getElementById('productsGrid').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+            }
+
+            showEmpty() {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('productsGrid').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            }
+
+            renderProducts(products) {
+                const grid = document.getElementById('productsGrid');
+                const loading = document.getElementById('loadingState');
+                const empty = document.getElementById('emptyState');
+
+                loading.style.display = 'none';
+
+                if (!products || products.length === 0) {
+                    this.showEmpty();
+                    return;
+                }
+
+                empty.style.display = 'none';
+                grid.style.display = 'grid';
+
+                grid.innerHTML = products.map(product => {
+                    const categoryNames = {
+                        'software': '소프트웨어',
+                        'hardware': '하드웨어',
+                        'service': '서비스'
+                    };
+
+                    const categoryName = categoryNames[product.category] || '기타';
+                    const formattedPrice = new Intl.NumberFormat('ko-KR').format(product.price);
+
+                    return `
+                        <div class="product-card" onclick="viewProduct('${product.id}')">
+                            <div class="product-image">
+                                ${product.imageUrl ? 
+                                    `<img src="${product.imageUrl}" alt="${product.name}" style="width:100%;height:100%;object-fit:cover;">` :
+                                    '<i class="fas fa-box"></i>'
+                                }
+                            </div>
+                            <div class="product-info">
+                                <div class="product-category">${categoryName}</div>
+                                <h3 class="product-title">${product.name}</h3>
+                                <p class="product-description">${product.description || '상품 설명이 없습니다.'}</p>
+                                <div class="product-price">₩${formattedPrice}</div>
+                                <div class="product-actions">
+                                    <button class="btn-cart" onclick="addToCart(event, '${product.id}')">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        장바구니
+                                    </button>
+                                    <button class="btn-detail" onclick="viewProduct('${product.id}')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderPagination(pagination) {
+                const paginationContainer = document.getElementById('pagination');
+                
+                if (!pagination || pagination.totalPages <= 1) {
+                    paginationContainer.innerHTML = '';
+                    return;
+                }
+
+                const { page, totalPages } = pagination;
+                let paginationHTML = '';
+
+                // Previous button
+                paginationHTML += `
+                    <button ${page <= 1 ? 'disabled' : ''} onclick="productsManager.changePage(${page - 1})">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                `;
+
+                // Page numbers
+                const startPage = Math.max(1, page - 2);
+                const endPage = Math.min(totalPages, page + 2);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationHTML += `
+                        <button class="${i === page ? 'active' : ''}" onclick="productsManager.changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                }
+
+                // Next button
+                paginationHTML += `
+                    <button ${page >= totalPages ? 'disabled' : ''} onclick="productsManager.changePage(${page + 1})">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+
+                paginationContainer.innerHTML = paginationHTML;
+            }
+
+            async changePage(page) {
+                this.currentPage = page;
+                await this.loadProducts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            async filterByCategory(category) {
+                // 버튼 상태 업데이트
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-category="${category}"]`).classList.add('active');
+
+                this.currentCategory = category;
+                this.currentPage = 1;
+                await this.loadProducts();
+            }
+
+            async searchProducts() {
+                const searchInput = document.getElementById('searchInput');
+                this.currentSearch = searchInput.value.trim();
+                this.currentPage = 1;
+                await this.loadProducts();
+            }
+        }
+
+        // 전역 함수들
+        function viewProduct(id) {
+            window.location.href = `detail.html?id=${id}`;
+        }
+
+        function addToCart(event, productId) {
+            event.stopPropagation();
+
+            if (!window.authManager || !window.authManager.isLoggedIn()) {
+                alert('장바구니를 이용하려면 로그인이 필요합니다.');
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            // 장바구니 추가 로직
+            if (window.shopManager) {
+                window.shopManager.addToCart(productId, 1);
+            }
+        }
+
+        function searchProducts() {
+            productsManager.searchProducts();
+        }
+
+        // 제품 매니저 초기화
+        let productsManager;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            productsManager = new ProductsManager();
+        });
+    </script>
+</body>
+</html>

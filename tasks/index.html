@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>업무일정 - PlugOn 통합 플랫폼</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <style>
+        .tasks-container {
+            max-width: 1400px;
+            margin: 100px auto 60px;
+            padding: 0 20px;
+        }
+
+        .tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .tasks-title h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .tasks-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .btn-add-task {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-task:hover {
+            background: #5a67d8;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tasks-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .task-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #666;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tasks-view-toggle {
+            display: flex;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            background: white;
+            color: #666;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .task-priority {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .task-priority.high {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .task-priority.medium {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .task-priority.low {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .task-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .task-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .task-assignee {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .assignee-avatar {
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .task-progress {
+            margin-bottom: 15px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f1f3f4;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+
+        .task-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-badge.pending {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .status-badge.in-progress {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-badge.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.on-hold {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tasks-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .tasks-table.active {
+            display: block;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .access-denied {
+            text-align: center;
+            padding: 100px 20px;
+            color: #666;
+        }
+
+        .access-denied i {
+            font-size: 4rem;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+
+        .access-denied h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .access-denied p {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-home:hover {
+            background: #5a67d8;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .tasks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tasks-container {
+                margin-top: 80px;
+                padding: 0 15px;
+            }
+
+            .tasks-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .tasks-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .task-filters {
+                justify-content: center;
+            }
+
+            .tasks-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .table th,
+            .table td {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <span class="logo-text">PlugOn</span>
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../index.html" class="nav-link">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../shop/products.html" class="nav-link">쇼핑</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../board/list.html" class="nav-link">게시판</a>
+                    </li>
+                    <li class="nav-item auth-required" style="display: none;">
+                        <a href="../mystore/dashboard.html" class="nav-link">MyStore</a>
+                    </li>
+                    <li class="nav-item active admin-only">
+                        <a href="index.html" class="nav-link">업무일정</a>
+                    </li>
+                </ul>
+                
+                <div class="user-menu">
+                    <div class="auth-buttons">
+                        <a href="../auth/login.html" class="btn-login">로그인</a>
+                        <a href="../auth/register.html" class="btn-register">회원가입</a>
+                    </div>
+                    
+                    <div class="user-dropdown" style="display: none;">
+                        <button class="user-dropdown-toggle">
+                            <i class="fas fa-user-circle"></i>
+                            <div class="user-info">
+                                <span class="user-name">사용자명</span>
+                                <span class="user-role">일반회원</span>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="user-details">
+                                    <div class="user-name">사용자명</div>
+                                    <div class="user-role">일반회원</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>내 정보</span>
+                            </a>
+                            <a href="../shop/cart.html" class="dropdown-item">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>장바구니 (<span id="cart-count">0</span>)</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>로그아웃</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="tasks-container">
+        <!-- Access Denied State -->
+        <div class="access-denied" id="accessDenied" style="display: none;">
+            <i class="fas fa-ban"></i>
+            <h2>접근 권한이 없습니다</h2>
+            <p>업무일정 시스템은 최고관리자가 지정한 사용자만 접근할 수 있습니다.<br>
+            권한이 필요한 경우 시스템 관리자에게 문의해주세요.</p>
+            <a href="../index.html" class="btn-home">
+                <i class="fas fa-home"></i>
+                홈으로 돌아가기
+            </a>
+        </div>
+
+        <!-- Tasks Content -->
+        <div id="tasksContent" style="display: none;">
+            <!-- Header -->
+            <div class="tasks-header">
+                <div class="tasks-title">
+                    <h1><i class="fas fa-calendar-check"></i> 업무일정 관리</h1>
+                    <p class="tasks-subtitle">프로젝트 업무와 일정을 체계적으로 관리하세요</p>
+                </div>
+                <a href="#" class="btn-add-task">
+                    <i class="fas fa-plus"></i>
+                    새 업무 추가
+                </a>
+            </div>
+
+            <!-- Controls -->
+            <div class="tasks-controls">
+                <div class="task-filters">
+                    <button class="filter-btn active" data-status="all">전체</button>
+                    <button class="filter-btn" data-status="pending">대기중</button>
+                    <button class="filter-btn" data-status="in-progress">진행중</button>
+                    <button class="filter-btn" data-status="completed">완료</button>
+                    <button class="filter-btn" data-status="on-hold">보류</button>
+                </div>
+                
+                <div class="tasks-view-toggle">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid View -->
+            <div class="tasks-grid" id="tasksGrid">
+                <!-- 샘플 태스크 카드들 -->
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-priority high">높음</div>
+                        <div class="task-actions">
+                            <button class="action-btn" title="편집">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" title="삭제">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <h3 class="task-title">PlugOn 통합 플랫폼 개발</h3>
+                    <p class="task-description">홈페이지, 쇼핑몰, 전산시스템을 통합한 플랫폼 개발 프로젝트</p>
+                    <div class="task-meta">
+                        <div class="task-assignee">
+                            <div class="assignee-avatar">김</div>
+                            <span>김개발</span>
+                        </div>
+                        <span>2024.03.15 ~ 2024.06.30</span>
+                    </div>
+                    <div class="task-progress">
+                        <div class="progress-label">
+                            <span>진행률</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="task-status">
+                        <span class="status-badge in-progress">진행중</span>
+                        <span class="task-date">7일 남음</span>
+                    </div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-priority medium">보통</div>
+                        <div class="task-actions">
+                            <button class="action-btn" title="편집">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" title="삭제">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <h3 class="task-title">사용자 인증 시스템 구축</h3>
+                    <p class="task-description">로그인, 회원가입, 권한 관리 시스템 개발</p>
+                    <div class="task-meta">
+                        <div class="task-assignee">
+                            <div class="assignee-avatar">이</div>
+                            <span>이보안</span>
+                        </div>
+                        <span>2024.03.01 ~ 2024.03.31</span>
+                    </div>
+                    <div class="task-progress">
+                        <div class="progress-label">
+                            <span>진행률</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="task-status">
+                        <span class="status-badge completed">완료</span>
+                        <span class="task-date">완료됨</span>
+                    </div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-priority low">낮음</div>
+                        <div class="task-actions">
+                            <button class="action-btn" title="편집">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" title="삭제">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <h3 class="task-title">문서화 작업</h3>
+                    <p class="task-description">API 문서 및 사용자 가이드 작성</p>
+                    <div class="task-meta">
+                        <div class="task-assignee">
+                            <div class="assignee-avatar">박</div>
+                            <span>박문서</span>
+                        </div>
+                        <span>2024.04.01 ~ 2024.04.15</span>
+                    </div>
+                    <div class="task-progress">
+                        <div class="progress-label">
+                            <span>진행률</span>
+                            <span>30%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    <div class="task-status">
+                        <span class="status-badge pending">대기중</span>
+                        <span class="task-date">시작 예정</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table View -->
+            <div class="tasks-table" id="tasksTable">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>업무명</th>
+                            <th>담당자</th>
+                            <th>우선순위</th>
+                            <th>진행률</th>
+                            <th>상태</th>
+                            <th>마감일</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>PlugOn 통합 플랫폼 개발</strong>
+                                <br>
+                                <small style="color: #666;">홈페이지, 쇼핑몰, 전산시스템 통합</small>
+                            </td>
+                            <td>
+                                <div class="task-assignee">
+                                    <div class="assignee-avatar">김</div>
+                                    <span>김개발</span>
+                                </div>
+                            </td>
+                            <td><span class="task-priority high">높음</span></td>
+                            <td>
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                                <small>75%</small>
+                            </td>
+                            <td><span class="status-badge in-progress">진행중</span></td>
+                            <td>2024.06.30</td>
+                            <td>
+                                <div class="task-actions">
+                                    <button class="action-btn" title="편집">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="삭제">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>사용자 인증 시스템 구축</strong>
+                                <br>
+                                <small style="color: #666;">로그인, 회원가입, 권한 관리</small>
+                            </td>
+                            <td>
+                                <div class="task-assignee">
+                                    <div class="assignee-avatar">이</div>
+                                    <span>이보안</span>
+                                </div>
+                            </td>
+                            <td><span class="task-priority medium">보통</span></td>
+                            <td>
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                                <small>100%</small>
+                            </td>
+                            <td><span class="status-badge completed">완료</span></td>
+                            <td>2024.03.31</td>
+                            <td>
+                                <div class="task-actions">
+                                    <button class="action-btn" title="편집">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="삭제">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-calendar-times"></i>
+                <h3>업무가 없습니다</h3>
+                <p>새로운 업무를 추가해보세요</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        class TasksManager {
+            constructor() {
+                this.currentFilter = 'all';
+                this.currentView = 'grid';
+                this.init();
+            }
+
+            init() {
+                this.checkAccess();
+                this.bindEvents();
+                this.loadTasks();
+            }
+
+            checkAccess() {
+                if (!window.authManager || !window.authManager.hasTaskAccess()) {
+                    document.getElementById('accessDenied').style.display = 'block';
+                    document.getElementById('tasksContent').style.display = 'none';
+                    return false;
+                }
+
+                document.getElementById('accessDenied').style.display = 'none';
+                document.getElementById('tasksContent').style.display = 'block';
+                return true;
+            }
+
+            bindEvents() {
+                // 필터 버튼들
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const status = e.target.dataset.status;
+                        this.filterTasks(status);
+                    });
+                });
+
+                // 뷰 토글 버튼들
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const view = e.target.dataset.view;
+                        this.toggleView(view);
+                    });
+                });
+            }
+
+            async loadTasks() {
+                try {
+                    const response = await fetch('/api/tasks', {
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            this.renderTasks(data.tasks);
+                        }
+                    } else if (response.status === 401 || response.status === 403) {
+                        // 권한 없음 - 이미 checkAccess()에서 처리됨
+                        console.warn('업무일정 접근 권한 없음');
+                    }
+                } catch (error) {
+                    console.error('업무일정 로드 실패:', error);
+                }
+            }
+
+            renderTasks(tasks) {
+                // 실제 서버 데이터가 없으므로 샘플 데이터 유지
+                // 향후 실제 API 데이터를 받으면 여기서 렌더링
+                console.log('Tasks loaded:', tasks);
+            }
+
+            filterTasks(status) {
+                // 필터 버튼 상태 업데이트
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-status="${status}"]`).classList.add('active');
+
+                this.currentFilter = status;
+                
+                // 필터링 로직 (샘플 데이터에 대해)
+                const cards = document.querySelectorAll('.task-card');
+                cards.forEach(card => {
+                    const cardStatus = this.getCardStatus(card);
+                    if (status === 'all' || cardStatus === status) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            getCardStatus(card) {
+                const statusBadge = card.querySelector('.status-badge');
+                const statusText = statusBadge.textContent.trim();
+                
+                const statusMap = {
+                    '대기중': 'pending',
+                    '진행중': 'in-progress',
+                    '완료': 'completed',
+                    '보류': 'on-hold'
+                };
+                
+                return statusMap[statusText] || 'pending';
+            }
+
+            toggleView(view) {
+                // 뷰 버튼 상태 업데이트
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-view="${view}"]`).classList.add('active');
+
+                this.currentView = view;
+
+                // 뷰 전환
+                const gridView = document.getElementById('tasksGrid');
+                const tableView = document.getElementById('tasksTable');
+
+                if (view === 'grid') {
+                    gridView.style.display = 'grid';
+                    tableView.classList.remove('active');
+                } else {
+                    gridView.style.display = 'none';
+                    tableView.classList.add('active');
+                }
+            }
+        }
+
+        // 페이지 로드 후 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            const tasksManager = new TasksManager();
+            
+            // 인증 상태 변경 감지
+            document.addEventListener('auth-login', function() {
+                tasksManager.checkAccess();
+            });
+
+            document.addEventListener('auth-logout', function() {
+                tasksManager.checkAccess();
+            });
+        });
+    </script>
+</body>
+</html>
